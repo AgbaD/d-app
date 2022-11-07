@@ -11,7 +11,7 @@ require('chai')
     .use(require('chai-as-promised'))
     .should()
 
-contract('BelSwap', (accounts) => {
+contract('BelSwap', ([deployer, investor]) => {
     let token, belSwap
 
     before(async() => {
@@ -36,6 +36,19 @@ contract('BelSwap', (accounts) => {
         it('exchange should have all the token', async () => {
             let balance = await token.balanceOf(belSwap.address)
             assert.equal(balance.toString(), tokens('1000000'))
+        })
+    })
+
+    describe('BuyTokens', async () => {
+        let result;
+
+        // purchase token before running tests
+        before(async() => {
+            await belSwap.buyTokens({from: investor, value: tokens('1')})
+        })
+        it('users should be able to buy token from BwlSwap', async () => {
+            let investorBalance = await token.balanceOf(investor)
+            assert.equal(investorBalance.toString(), tokens('100'))
         })
     })
 })
