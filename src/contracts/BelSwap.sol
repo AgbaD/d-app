@@ -7,7 +7,7 @@ contract BelSwap {
     Token public token;
     // Etherium to token exchange rate
     // 50 tokens to one etherium
-    uint public rate = 50;
+    uint public rate = 100;
 
     constructor(Token _token) public {
         token = _token;

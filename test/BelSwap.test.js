@@ -44,11 +44,16 @@ contract('BelSwap', ([deployer, investor]) => {
 
         // purchase token before running tests
         before(async() => {
-            await belSwap.buyTokens({from: investor, value: tokens('1')})
+            await belSwap.buyTokens({from: investor, value: web3.utils.toWei('1', 'ether')})
         })
-        it('users should be able to buy token from BwlSwap', async () => {
+        it('users should be able to buy token from BelSwap', async () => {
             let investorBalance = await token.balanceOf(investor)
             assert.equal(investorBalance.toString(), tokens('100'))
+
+            let belSwapBalance = await token.balanceOf(belSwap.address)
+            assert.equal(belSwapBalance.toString(), tokens('999900'))
+            belSwapBalance = await web3.eth.getBalance(belSwap.address)
+            assert.equal(belSwapBalance.toString(), web3.utils.toWei('1', 'ether'))
         })
     })
 })
