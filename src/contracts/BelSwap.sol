@@ -38,10 +38,10 @@ contract BelSwap {
     }
 
     function sellTokens(uint _tokenAmount) public {
+        require(token.balanceOf(msg.sender) >= _tokenAmount);
         // calculate amount of ether to be redeemed
         uint ethAmount = _tokenAmount / rate;
         require(address(this).balance >= ethAmount );
-        require(token.balanceOf(msg.sender) >= _tokenAmount);
 
         token.transferFrom(msg.sender, address(this), _tokenAmount);
         msg.sender.transfer(ethAmount);

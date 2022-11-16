@@ -87,6 +87,9 @@ contract('BelSwap', ([deployer, investor]) => {
             assert.equal(event.token, token.address)
             assert.equal(event.amount, tokens('100').toString())
             assert.equal(event.rate.toString(), '100')
+
+            // Investor can't send more tokens than they have
+            await belSwap.sellTokens(tokens('500'), {from: investor}).should.be.rejected;
         })
     })
 
