@@ -1,4 +1,31 @@
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My First dApp</title>
+        <style>
+            body {
+              text-align: center;
+              font-family: Arial, Helvetica, sans-serif;
+            }
+          
+            div {
+              width: 20%;
+              margin: 0 auto;
+              display: flex;
+              flex-direction: column;
+            }
+          
+            button {
+              width: 100%;
+              margin: 10px 0px 5px 0px;
+            }
+        </style>
+    </head>
+
     <body>
         <h1>Blank's Second dApp</h1>
         <p>We set up a mood</p>
@@ -11,4 +38,86 @@
             <button onclick="setMood()"> Set Mood </button>
         </div>
     </body>
+    <script
+        charset="utf-8"
+        src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+        type="application/javascript">
+    </script>
+    <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+    <script>
+        let MoodContract;
+        window.addEventListener('load', async () => {
+            window.ethereum.request({method: 'eth_requestAccounts'})
+            let currentAccount;
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            if (provider) {
+                startApp(provider);
+            } else {
+                console.log('Please install MetaMask!');
+            }
+
+            async function startApp(provider) {
+                try {
+                    const accounts = await ethereum.request({ method: 'eth_accounts' })
+                    handleAccountsChanged(accounts)
+                } catch (error) {
+                    console.error('Do you have multiple wallets installed?');
+                }
+            }
+
+            function handleAccountsChanged(accounts) {
+                if (accounts.length === 0) {
+                    console.log('Please connect to MetaMask.');
+                } else if (accounts[0] !== currentAccount) {
+                    currentAccount = accounts[0];
+                }
+            }
+            const signer = provider.getSigner()
+            const MoodContractAddress = "0x3498B4d05B698D0C2dbBF2Cd1f7D9deEBD284989";
+            const MoodContractABI = [
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "_mood",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "setMood",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getMood",
+                    "outputs": [
+                        {
+                            "internalType": "string",
+                            "name": "",
+                            "type": "string"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ];
+            MoodContract = new ethers.Contract(
+                MoodContractAddress,
+                MoodContractABI,
+                signer
+            )
+        });
+
+        async function getMood() {
+            const mood = await MoodContract.getMood();
+            console.log(mood);
+        }
+
+        async function setMood() {
+            const mood = document.getElementById("mood").value;
+            await MoodContract.setMood(mood);
+        }
+       
+    </script>
 </html>
